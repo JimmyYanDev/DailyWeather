@@ -56,6 +56,7 @@ class PlaceFragment : Fragment() {
                 viewModel.places.addAll(result)
                 recyclerView.visibility = View.VISIBLE
                 bgImageView.visibility = View.GONE
+                recyclerView.smoothScrollToPosition(0)
                 adapter.notifyDataSetChanged()
             } else {
                 recyclerView.visibility = View.GONE
