@@ -1,6 +1,8 @@
 package com.dailyweather.android.ui.place
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +11,14 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dailyweather.android.MainActivity
 import com.dailyweather.android.R
-import com.dailyweather.android.logic.model.PlaceViewModel
+import com.dailyweather.android.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
 
 class PlaceFragment : Fragment() {
 
-    private val viewModel by lazy {
+    internal val viewModel by lazy {
         ViewModelProviders.of(this).get(PlaceViewModel::class.java)
     }
 
@@ -31,6 +34,18 @@ class PlaceFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        if (activity is MainActivity && viewModel.isPlaceSaved()) {
+            val place = viewModel.getSavedPlace()
+            val intent = Intent(context, WeatherActivity::class.java).apply {
+                putExtra(WeatherActivity.EXTRA_LOCATION_LNG, place.location.lng)
+                putExtra(WeatherActivity.EXTRA_LOCATION_LAT, place.location.lat)
+                putExtra(WeatherActivity.EXTRA_PLACE_NAME, place.name)
+            }
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
 
         adapter = PlaceAdapter(this, viewModel.places)
         val linearLayoutManager = LinearLayoutManager(context)

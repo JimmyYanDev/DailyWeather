@@ -10,11 +10,16 @@ import kotlin.coroutines.suspendCoroutine
 
 object DailyWeatherNetwork {
     private val placeService: PlaceService by lazy { ServiceCreator.create<PlaceService>() }
+    private val weatherService: WeatherService by lazy { ServiceCreator.create<WeatherService>() }
 
     suspend fun searchPlaces(placeName: String) = placeService.searchPlaces(placeName).await()
 
+    suspend fun getDailWeather(lng: String, lat: String) = weatherService.getDailyWeather(lng, lat).await()
+
+    suspend fun getRealtimeWeather(lng: String, lat: String) = weatherService.getRealtimeWeather(lng, lat).await()
+
     private suspend fun <T> Call<T>.await() = suspendCoroutine<T> {
-        enqueue(object: Callback<T> {
+        enqueue(object : Callback<T> {
             override fun onResponse(call: Call<T>, response: Response<T>) {
                 val body = response.body()
                 Log.i("TAG", "onResponse: " + body)
